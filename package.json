@@ -1,0 +1,30 @@
+{
+  "name": "sdapi",
+  "version": "0.0.1",
+  "description": "Unofficial APIs of SpanishDict.com",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint *.{ts,js} test/*.{ts,js}",
+    "test": "jest"
+  },
+  "keywords": [
+    "spanish",
+    "dictionary"
+  ],
+  "author": "Symeon Huang",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "himalaya": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "@babel/preset-env": "latest",
+    "@babel/preset-typescript": "latest",
+    "jest": "latest",
+    "eslint-plugin-jest": "latest",
+    "typescript": "^3.7.2",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest"
+  }
+}

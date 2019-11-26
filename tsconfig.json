@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "lib": ["ES2018"],
+        "target": "ES2018",
+        "moduleResolution": "Node",
+        "strict": true,
+        "outDir": "dist"
+    }
+}
