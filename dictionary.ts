@@ -22,8 +22,11 @@ interface WordResult {
     word: string;
     gender?: Gender;
     pronunciation?: string;
+    context: string;
     meaning: string;
+    part: string;  // TODO: make it an enum
     examples: Array<Example>;
+    regions: Array<string>;
 }
 
 function convertLang(lang: string): Language {
@@ -55,8 +58,11 @@ function convertSense(sense: any, lang: Language): WordResult {
         word: sense.subheadword,
         lang: lang,
         gender: sense.gender ? convertGender(sense.gender) : undefined,
+        context: sense.context,
         meaning: translation.translation,
-        examples: translation.examples.map((eg: any) => convertExample(eg, lang))
+        part: sense.partOfSpeech.nameEn,
+        examples: translation.examples.map((eg: any) => convertExample(eg, lang)),
+        regions: sense.regions.map((region: any) => region.nameEn)
     };
 }
 
@@ -74,7 +80,6 @@ function extract(html: string): Array<WordResult> {
     if (!neodict || !neodict.length) {
         throw new Error('No results');
     }
-    console.log(JSON.stringify(neodict));
     return neodict.map((nd: any) => nd.posGroups).flat()
     .map((posGroup: any) => posGroup.senses).flat()
     .map((sense: any) => convertSense(sense, lang));
