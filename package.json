@@ -15,7 +15,8 @@
   "author": "Symeon Huang",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "himalaya": "^1.1.0"
+    "himalaya": "^1.1.0",
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "eslint": "^6.6.0",
@@ -25,6 +26,8 @@
     "eslint-plugin-jest": "latest",
     "typescript": "^3.7.2",
     "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest"
+    "@typescript-eslint/parser": "latest",
+    "@types/node": "latest",
+    "@types/node-fetch": "latest"
   }
 }

@@ -1,5 +1,5 @@
-//@ts-ignore
 import { parse } from 'himalaya';
+import fetch from 'node-fetch';
 
 enum Gender {
     Masculine,
@@ -8,8 +8,8 @@ enum Gender {
 }
 
 enum Language {
-    English,
-    Spanish
+    English = 'en',
+    Spanish = 'es'
 }
 
 interface Example {
@@ -27,10 +27,6 @@ interface WordResult {
     part: string;  // TODO: make it an enum
     examples: Array<Example>;
     regions: Array<string>;
-}
-
-function convertLang(lang: string): Language {
-    return lang === 'es' ? Language.Spanish : Language.English;
 }
 
 function convertGender(gender: string): Gender {
@@ -70,24 +66,36 @@ function extract(html: string): Array<WordResult> {
     const json = parse(html);
     const resultsLine = json[1].children[0].children[20].children[0].content.split('\n')
                         .find((line: string) => line.includes('SD_DICTIONARY_RESULTS_PROPS'));
-    const resultsProps = JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1, resultsLine.length - 1));
-    const lang = resultsProps.es.entry ? Language.Spanish : Language.English;
-    const entry = lang === Language.Spanish ? resultsProps.es.entry : resultsProps.en.entry;
-    if (!entry) {
-        throw new Error('Unknown results');
+    if (!resultsLine) {
+        throw new Error('Cannot find SD_DICTIONARY_RESULTS_PROPS. SpanishDict API might have changed');
     }
-    const neodict = entry.neodict;
-    if (!neodict || !neodict.length) {
-        throw new Error('No results');
+    const resultsProps = JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1,
+                                                          resultsLine.length - 1));
+    let result: Array<WordResult> = [];
+    for (const lang of [Language.Spanish, Language.English]) {
+        const entry = resultsProps[lang].entry;
+        if (!entry) {
+            continue;
+        }
+        const neodict = entry.neodict;
+        if (!neodict || !neodict.length) {
+            throw new Error('Cannot find neodict. SpanishDict API might have changed');
+        }
+        result = result.concat(neodict.map((nd: any) => nd.posGroups).flat()
+        .map((posGroup: any) => posGroup.senses).flat()
+        .map((sense: any) => convertSense(sense, lang)));
     }
-    return neodict.map((nd: any) => nd.posGroups).flat()
-    .map((posGroup: any) => posGroup.senses).flat()
-    .map((sense: any) => convertSense(sense, lang));
+    return result;
 }
 
-function query(word: string): Array<WordResult> {
-    let html = "" + word; // TODO
-    return extract(html);
+function query(word: string): Promise<Array<WordResult>> {
+    if (!word.length) {
+        return Promise.reject(new Error('Zero-length word'));
+    }
+    const url = "https://www.spanishdict.com/translate/" + word;
+    return fetch(url)
+    .then(res => res.text())
+    .then(text => extract(text));
 }
 
 export default {
