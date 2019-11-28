@@ -2,7 +2,7 @@ import dict from '../dictionary';
 import fs from 'fs';
 
 test('Spanish word - libro', () => {
-    const html = fs.readFileSync('./test/dict_libro.html', 'utf-8');
+    const html = fs.readFileSync('./src/test/dict_libro.html', 'utf-8');
     const result = dict.extract(html);
     result.forEach(word => {
         expect(word.word).toMatch('libro');
@@ -10,7 +10,7 @@ test('Spanish word - libro', () => {
 });
 
 test('English word - book', () => {
-    const html = fs.readFileSync('./test/dict_book.html', 'utf-8');
+    const html = fs.readFileSync('./src/test/dict_book.html', 'utf-8');
     const result = dict.extract(html);
     result.forEach(word => {
         expect(word.word).toMatch('book');
@@ -19,7 +19,7 @@ test('English word - book', () => {
 
 test('Bilingual word - once', () => {
     // We expect to see both Spanish and English results
-    const html = fs.readFileSync('./test/dict_once.html', 'utf-8');
+    const html = fs.readFileSync('./src/test/dict_once.html', 'utf-8');
     const result = dict.extract(html);
     const es1 = {
         word: 'once',

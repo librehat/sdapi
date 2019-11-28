@@ -2,10 +2,13 @@
   "name": "sdapi",
   "version": "0.0.1",
   "description": "Unofficial APIs of SpanishDict.com",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "bin": {
+    "spanishdict": "./bin/spanishdict"
+  },
   "scripts": {
     "build": "tsc",
-    "lint": "eslint *.{ts,js} test/*.{ts,js}",
+    "lint": "eslint src/*.{ts,js} src/test/*.{ts,js}",
     "test": "jest"
   },
   "keywords": [
