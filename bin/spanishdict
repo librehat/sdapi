@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-const dict = require('../lib/dictionary').default;
+const query = require('../lib/dictionary').query;
 
 const word = process.argv.slice(2).join(' ');
-dict.query(word)
+query(word)
 .then(result => console.log(JSON.stringify(result, null, 4)))
 .catch(e => {
     console.error('Caught an error', e);

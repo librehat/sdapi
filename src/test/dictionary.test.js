@@ -1,9 +1,9 @@
-import dict from '../dictionary';
+import { extract, query } from '../dictionary';
 import fs from 'fs';
 
 test('Spanish word - libro', () => {
     const html = fs.readFileSync('./src/test/dict_libro.html', 'utf-8');
-    const result = dict.extract(html);
+    const result = extract(html);
     result.forEach(word => {
         expect(word.word).toMatch('libro');
     });
@@ -11,7 +11,7 @@ test('Spanish word - libro', () => {
 
 test('English word - book', () => {
     const html = fs.readFileSync('./src/test/dict_book.html', 'utf-8');
-    const result = dict.extract(html);
+    const result = extract(html);
     result.forEach(word => {
         expect(word.word).toMatch('book');
     });
@@ -20,7 +20,7 @@ test('English word - book', () => {
 test('Bilingual word - once', () => {
     // We expect to see both Spanish and English results
     const html = fs.readFileSync('./src/test/dict_once.html', 'utf-8');
-    const result = dict.extract(html);
+    const result = extract(html);
     const es1 = {
         word: 'once',
         lang: 'es',
@@ -57,7 +57,7 @@ test('Bilingual word - once', () => {
 
 test('Real-world query - libro', async () => {
     // Similar test but this one queries the word from SpanishDict.com
-    const result = await dict.query('libro');
+    const result = await query('libro');
     result.forEach(word => {
         expect(word.word).toMatch('libro');
     });

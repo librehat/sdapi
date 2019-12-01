@@ -1,17 +1,7 @@
 //@ts-ignore
 import { parse } from 'himalaya';
 import fetch from 'node-fetch';
-
-enum Gender {
-    Masculine,
-    Femeline,
-    Neutral
-}
-
-enum Language {
-    English = 'en',
-    Spanish = 'es'
-}
+import { Gender, Language } from './constants';
 
 interface Example {
     original: string;
@@ -99,7 +89,8 @@ function query(word: string): Promise<Array<WordResult>> {
     .then(text => extract(text));
 }
 
-export default {
+export {
     extract,
     query
 };
+export default query;
