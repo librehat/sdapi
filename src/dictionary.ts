@@ -79,14 +79,12 @@ function extract(html: string): Array<WordResult> {
     return result;
 }
 
-function query(word: string): Promise<Array<WordResult>> {
+async function query(word: string): Promise<Array<WordResult>> {
     if (!word.length) {
         return Promise.reject(new Error('Zero-length word'));
     }
-    const url = "https://www.spanishdict.com/translate/" + word;
-    return fetch(url)
-    .then(res => res.text())
-    .then(text => extract(text));
+    const res = await fetch(`https://www.spanishdict.com/translate/${word}`);
+    return extract(await res.text());
 }
 
 export {
