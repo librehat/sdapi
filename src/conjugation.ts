@@ -169,6 +169,10 @@ function isTagType(tag: any, type: string, name?: string): boolean {
  */
 function extractConjugationJson(html: string): Array<any> {
     const json = parse(html);
+    const link = attributeValue(json[1].children[0].children[1], 'href');
+    if (link.indexOf('https://www.spanishdict.com/conjugate/') !== 0) {
+        throw new Error('No conjugation found. Maybe it was not a verb?');
+    }
     const contentDiv = json[1].children[1].children[0].children
     .find((tag: any) => isTagType(tag, 'element', 'div') && hasAttribute(tag, 'class', 'content-container container'));
     if (!contentDiv) {
@@ -183,7 +187,7 @@ function extractConjugationJson(html: string): Array<any> {
     if (!conjugation) {
         throw new Error('Couldn\'t find the conjugation div. SpanishDict API might have changed');
     }
-    return conjugation.children[0];
+    return conjugation;
 }
 
 function flattenText(children: Array<any>): string {
@@ -241,6 +245,7 @@ async function query(verb: string): Promise<Array<ConjugationResult>> {
 }
 
 export {
+    convertTagToConjugationResults,
     extract,
     query
 };
