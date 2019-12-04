@@ -4,7 +4,8 @@
   "description": "Unofficial APIs of SpanishDict.com",
   "main": "lib/index.js",
   "bin": {
-    "spanishdict": "./bin/spanishdict"
+    "sd-translate": "./bin/sd-translate",
+    "sd-conjugate": "./bin/sd-conjugate"
   },
   "scripts": {
     "build": "tsc",

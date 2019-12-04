@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+const query = require('../lib/conjugation').query;
+
+const word = process.argv.slice(2).join(' ');
+query(word)
+.then(result => console.log(JSON.stringify(result, null, 4)))
+.catch(e => {
+    console.error('Caught an error', e);
+});
