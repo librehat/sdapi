@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Unofficial APIs of SpanishDict.com",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "bin": {
     "sd-translate": "./bin/sd-translate",
     "sd-conjugate": "./bin/sd-conjugate"
