@@ -55,7 +55,18 @@ function convertSense(sense: any, lang: Language): WordResult {
 
 function extract(html: string): Array<WordResult> {
     const json = parse(html);
-    const resultsLine = json[1].children[0].children[20].children[0].content.split('\n')
+    const bodyBlock = json[1].children[0];
+    const resultTag = bodyBlock.children.find((child: any) => {
+        return child.type === 'element'
+            && child.tagName === 'script'
+            && child.children?.length
+            && child.children[0].type === 'text'
+            && child.children[0].content.includes('SD_DICTIONARY_RESULTS_PROPS');
+    });
+    if (!resultTag) {
+        throw new Error('Cannot find the tag with results. SpanishDict API might have changed');
+    }
+    const resultsLine = resultTag.children[0].content.split('\n')
                         .find((line: string) => line.includes('SD_DICTIONARY_RESULTS_PROPS'));
     if (!resultsLine) {
         throw new Error('Cannot find SD_DICTIONARY_RESULTS_PROPS. SpanishDict API might have changed');

@@ -27,6 +27,7 @@
     "eslint": "^6.6.0",
     "@babel/preset-env": "latest",
     "@babel/preset-typescript": "latest",
+    "@babel/plugin-proposal-optional-chaining": "latest",
     "jest": "latest",
     "eslint-plugin-jest": "latest",
     "typescript": "^3.7.2",
