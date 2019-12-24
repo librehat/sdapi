@@ -2,15 +2,16 @@
 import { parse } from 'himalaya';
 import fetch from 'node-fetch';
 import { Person, CNumber, Tense, Mood, Form } from './constants';
+import { hasAttribute, attributeValue, isTagType, flattenText } from './util';
 
 interface ConjugationResult {
-    person?: Person,
-    number?: CNumber,
-    tense: Tense,
-    mood: Mood,
-    form: Form,
-    sdTense: string, // This holds the 'data-tense' from the SpanishDict
-    word: string
+    person?: Person;
+    number?: CNumber;
+    tense: Tense;
+    mood: Mood;
+    form: Form;
+    sdTense: string; // This holds the 'data-tense' from the SpanishDict
+    word: string;
 }
 
 /**
@@ -128,39 +129,6 @@ function sdTenseToForm(tense: string): Form {
     return Form.Simple;
 }
 
-function hasAttribute(tag: any, key: string, value?: string): boolean {
-    if (!tag.attributes || !tag.attributes.length) {
-        return false;
-    }
-    return tag.attributes.find((attr: any) => {
-        if (attr.key !== key) {
-            return false;
-        }
-        if (value && attr.value !== value) {
-            return false;
-        }
-        return true;
-    }) !== undefined;
-}
-
-function attributeValue(tag: any, key: string): string {
-    const attribute = tag.attributes.find((attr: any) => attr.key === key);
-    if (!attribute) {
-        throw new Error(`Couldn't find the attribute ${key}`);
-    }
-    return attribute.value;
-}
-
-function isTagType(tag: any, type: string, name?: string): boolean {
-    if (tag.type !== type) {
-        return false;
-    }
-    if (name && tag.tagName !== name) {
-        return false;
-    }
-    return true;
-}
-
 /**
  * Trims the unnecessary branches and returns the part that contains the conjugation
  * as an object array.
@@ -190,18 +158,6 @@ function extractConjugationJson(html: string): Array<any> {
     return conjugation;
 }
 
-function flattenText(children: Array<any>): string {
-    let text = "";
-    for (const child of children) {
-        if (child.type === 'text') {
-            text += child.content;
-        } else if (child.children) {
-            text += flattenText(child.children);
-        }
-    }
-    return text;
-}
-
 function convertTagToConjugationResult(tag: any): ConjugationResult {
     const sdPerson = attributeValue(tag, 'data-person');
     const sdTense = attributeValue(tag, 'data-tense');
@@ -221,7 +177,7 @@ function convertTagToConjugationResult(tag: any): ConjugationResult {
  * Recursively converts the JSON to ConjugationResult array
  */
 function convertTagToConjugationResults(tag: any): Array<ConjugationResult> {
-    let results: Array<ConjugationResult> = new Array();
+    let results: Array<ConjugationResult> = [];
     if (isTagType(tag, 'element') && hasAttribute(tag, 'data-person')) {
         results.push(convertTagToConjugationResult(tag));
     } else if (tag.children) {

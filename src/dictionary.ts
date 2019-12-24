@@ -2,6 +2,7 @@
 import { parse } from 'himalaya';
 import fetch from 'node-fetch';
 import { Gender, Language } from './constants';
+import { isTagType } from './util';
 
 interface Example {
     original: string;
@@ -57,8 +58,7 @@ function extract(html: string): Array<WordResult> {
     const json = parse(html);
     const bodyBlock = json[1].children[0];
     const resultTag = bodyBlock.children.find((child: any) => {
-        return child.type === 'element'
-            && child.tagName === 'script'
+        return isTagType(child, 'element', 'script')
             && child.children?.length
             && child.children[0].type === 'text'
             && child.children[0].content.includes('SD_DICTIONARY_RESULTS_PROPS');
