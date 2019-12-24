@@ -1,6 +1,6 @@
 {
   "name": "sdapi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Unofficial APIs of SpanishDict.com",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint src/*.{ts,js} src/test/*.{ts,js}",
-    "test": "jest"
+    "test": "jest --collect-coverage"
   },
   "keywords": [
     "spanish",
