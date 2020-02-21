@@ -55,39 +55,41 @@ function convertSense(sense: any, lang: Language): WordResult {
 }
 
 function extract(html: string): Array<WordResult> {
-    const json = parse(html);
-    const bodyBlock = json[1].children[0];
-    const resultTag = bodyBlock.children.find((child: any) => {
-        return isTagType(child, 'element', 'script')
+    const body = parse(html)[1];
+    const dataSearchFn = (element: any) => {
+        return element.children.find(
+            (child: any) =>
+            isTagType(child, 'element', 'script')
             && child.children?.length
             && child.children[0].type === 'text'
-            && child.children[0].content.includes('SD_DICTIONARY_RESULTS_PROPS');
-    });
+            && child.children[0].content.includes('SD_COMPONENT_DATA')
+        );
+    };
+    let resultTag;
+    for (const child of body.children) {
+        resultTag = dataSearchFn(child);
+        if (resultTag) {
+            break;
+        }
+    }
     if (!resultTag) {
         throw new Error('Cannot find the tag with results. SpanishDict API might have changed');
     }
     const resultsLine = resultTag.children[0].content.split('\n')
-                        .find((line: string) => line.includes('SD_DICTIONARY_RESULTS_PROPS'));
+                        .find((line: string) => line.includes('sdDictionaryResultsProps'));
     if (!resultsLine) {
         throw new Error('Cannot find SD_DICTIONARY_RESULTS_PROPS. SpanishDict API might have changed');
     }
     const resultsProps = JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1,
-                                                          resultsLine.length - 1));
-    let result: Array<WordResult> = [];
-    for (const lang of [Language.Spanish, Language.English]) {
-        const entry = resultsProps[lang].entry;
-        if (!entry) {
-            continue;
-        }
-        const neodict = entry.neodict;
-        if (!neodict || !neodict.length) {
-            throw new Error('Cannot find neodict. SpanishDict API might have changed');
-        }
-        result = result.concat(neodict.map((nd: any) => nd.posGroups).flat()
-        .map((posGroup: any) => posGroup.senses).flat()
-        .map((sense: any) => convertSense(sense, lang)));
+                                                          resultsLine.length - 1)).sdDictionaryResultsProps;
+    const neodict = resultsProps?.entry?.neodict;
+    if (!neodict || !neodict.length) {
+        throw new Error('Cannot find neodict. SpanishDict API might have changed');
     }
-    return result;
+    return neodict
+    .map((nd: any) => nd.posGroups).flat()
+    .map((posGroup: any) => posGroup.senses).flat()
+    .map((sense: any) => convertSense(sense, resultsProps.entryLang));
 }
 
 async function query(word: string): Promise<Array<WordResult>> {

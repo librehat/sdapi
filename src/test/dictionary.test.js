@@ -18,7 +18,8 @@ test('English word - book', () => {
 });
 
 test('Bilingual word - once', () => {
-    // We expect to see both Spanish and English results
+    // SpanishDict by default only returns Spanish to English result
+    // To get English to Spanish, `?langFrom=en` must be added in the URL
     const html = fs.readFileSync('./src/test/dict_once.html', 'utf-8');
     const result = extract(html);
     const es1 = {
@@ -52,7 +53,7 @@ test('Bilingual word - once', () => {
         regions: []
     };
     expect(result).toContainEqual(es1);
-    expect(result).toContainEqual(en1);
+    expect(result).not.toContainEqual(en1);
 });
 
 test('Real-world query - libro', async () => {
