@@ -11,7 +11,7 @@ test('Spanish verb - hacer', () => {
         tense: Tense.Present,
         mood: Mood.Indicative,
         form: Form.Simple,
-        sdTense: 'presentIndicative',
+        paradigm: 'presentIndicative',
         word: 'hago'
     });
     expect(result).toContainEqual({
@@ -20,7 +20,7 @@ test('Spanish verb - hacer', () => {
         tense: Tense.Imperfect2,
         mood: Mood.Subjunctive,
         form: Form.Simple,
-        sdTense: 'imperfectSubjunctive2',
+        paradigm: 'imperfectSubjunctive2',
         word: 'hicieses'
     });
     expect(result).toContainEqual({
@@ -29,7 +29,7 @@ test('Spanish verb - hacer', () => {
         tense: Tense.Negative,
         mood: Mood.Imperative,
         form: Form.Simple,
-        sdTense: 'negativeImperative',
+        paradigm: 'negativeImperative',
         word: 'no hagan'
     });
     expect(result).toContainEqual({
@@ -38,7 +38,7 @@ test('Spanish verb - hacer', () => {
         tense: Tense.Conditional,
         mood: Mood.Indicative,
         form: Form.Progressive,
-        sdTense: 'conditionalContinuous',
+        paradigm: 'conditionalContinuous',
         word: 'estaríamos haciendo'
     });
     expect(result).toContainEqual({
@@ -47,7 +47,7 @@ test('Spanish verb - hacer', () => {
         tense: Tense.Past,
         mood: Mood.Subjunctive,
         form: Form.Perfect,
-        sdTense: 'pastPerfectSubjunctive',
+        paradigm: 'pastPerfectSubjunctive',
         word: 'hubieras hecho'
     });
 });
@@ -61,7 +61,7 @@ test('Real-world verb conjugation - hacer', async () => {
         tense: Tense.Present,
         mood: Mood.Indicative,
         form: Form.Simple,
-        sdTense: 'presentIndicative',
+        paradigm: 'presentIndicative',
         word: 'hago'
     });
 });
@@ -80,7 +80,7 @@ test('Spanish verb (non-inifinivo) - como', () => {
         tense: Tense.Present,
         mood: Mood.Subjunctive,
         form: Form.Perfect,
-        sdTense: 'presentPerfectSubjunctive',
+        paradigm: 'presentPerfectSubjunctive',
         word: 'haya comido'
     });
 });

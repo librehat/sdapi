@@ -1,7 +1,7 @@
 enum Gender {
-    Masculine,
-    Femeline,
-    Neutral
+    Masculine = 'm',
+    Femeline = 'f',
+    Neutral = 'n'
 }
 
 enum Language {
@@ -16,33 +16,33 @@ enum Person {
 }
 
 enum CNumber {
-    Singular = 's',
-    Plural = 'p'
+    Singular = 'sig',
+    Plural = 'plr'
 }
 
 enum Tense {
-    Present,
-    Preterite,
-    Imperfect,
-    Conditional,
-    Imperfect2,
-    Future,
-    Affirmative,
-    Negative,
-    Past
+    Present = 'present',
+    Preterite = 'preterite',
+    Imperfect = 'imperfect',
+    Conditional = 'conditional',
+    Imperfect2 = 'imperfect2',
+    Future = 'future',
+    Affirmative = 'affirmative',
+    Negative = 'negative',
+    Past = 'past'
 }
 
 enum Mood {
-    Indicative,
-    Subjunctive,
-    Imperative
+    Indicative = 'ind',
+    Subjunctive = 'sub',
+    Imperative = 'imp'
 }
 
 // Not a linguist, just trying to separate them in the program
 enum Form {
-    Simple,
-    Progressive, // also known as continuous
-    Perfect
+    Simple = 'simp',
+    Progressive = 'prog', // also known as continuous
+    Perfect = 'perf'
 }
 
 export {

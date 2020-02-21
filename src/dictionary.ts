@@ -1,8 +1,6 @@
-//@ts-ignore
-import { parse } from 'himalaya';
 import fetch from 'node-fetch';
 import { Gender, Language } from './constants';
-import { isTagType } from './util';
+import { extractComponentData } from './util';
 
 interface Example {
     original: string;
@@ -55,33 +53,7 @@ function convertSense(sense: any, lang: Language): WordResult {
 }
 
 function extract(html: string): Array<WordResult> {
-    const body = parse(html)[1];
-    const dataSearchFn = (element: any) => {
-        return element.children.find(
-            (child: any) =>
-            isTagType(child, 'element', 'script')
-            && child.children?.length
-            && child.children[0].type === 'text'
-            && child.children[0].content.includes('SD_COMPONENT_DATA')
-        );
-    };
-    let resultTag;
-    for (const child of body.children) {
-        resultTag = dataSearchFn(child);
-        if (resultTag) {
-            break;
-        }
-    }
-    if (!resultTag) {
-        throw new Error('Cannot find the tag with results. SpanishDict API might have changed');
-    }
-    const resultsLine = resultTag.children[0].content.split('\n')
-                        .find((line: string) => line.includes('sdDictionaryResultsProps'));
-    if (!resultsLine) {
-        throw new Error('Cannot find SD_DICTIONARY_RESULTS_PROPS. SpanishDict API might have changed');
-    }
-    const resultsProps = JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1,
-                                                          resultsLine.length - 1)).sdDictionaryResultsProps;
+    const resultsProps = extractComponentData(html).sdDictionaryResultsProps;
     const neodict = resultsProps?.entry?.neodict;
     if (!neodict || !neodict.length) {
         throw new Error('Cannot find neodict. SpanishDict API might have changed');

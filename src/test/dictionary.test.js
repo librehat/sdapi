@@ -1,4 +1,5 @@
 import { extract, query } from '../dictionary';
+import { Gender, Language } from '../constants';
 import fs from 'fs';
 
 test('Spanish word - libro', () => {
@@ -24,8 +25,8 @@ test('Bilingual word - once', () => {
     const result = extract(html);
     const es1 = {
         word: 'once',
-        lang: 'es',
-        gender: 0,
+        lang: Language.Spanish,
+        gender: Gender.Masculine,
         context: 'number',
         meaning: 'eleven',
         part: 'noun',
@@ -39,8 +40,8 @@ test('Bilingual word - once', () => {
     };
     const en1 = {
         word: 'once',
-        lang: 'en',
-        gender: undefined,
+        lang: Language.English,
+        gender: Gender.Neutral,
         context: 'when',
         meaning: 'una vez que',
         part: 'conjunction',

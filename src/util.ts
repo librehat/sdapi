@@ -1,3 +1,5 @@
+import { parse } from 'himalaya';
+
 export function hasAttribute(tag: any, key: string, value?: string): boolean {
     if (!tag.attributes || !tag.attributes.length) {
         return false;
@@ -43,3 +45,28 @@ export function flattenText(children: Array<any>): string {
     return text;
 }
 
+export function extractComponentData(html: string): any {
+    const body = parse(html)[1];
+    const dataSearchFn = (element: any) => {
+        return element.children.find(
+            (child: any) =>
+            isTagType(child, 'element', 'script')
+            && child.children?.length
+            && child.children[0].type === 'text'
+            && child.children[0].content.includes('SD_COMPONENT_DATA')
+        );
+    };
+    let resultTag;
+    for (const child of body.children) {
+        resultTag = dataSearchFn(child);
+        if (resultTag) {
+            break;
+        }
+    }
+    if (!resultTag) {
+        throw new Error('Cannot find the tag with results. SpanishDict API might have changed');
+    }
+    const resultsLine = resultTag.children[0].content.split('\n').find((line: string) => line.includes('SD_COMPONENT_DATA'));
+    return JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1,
+                                            resultsLine.length - 1));
+}

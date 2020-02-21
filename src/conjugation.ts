@@ -1,8 +1,6 @@
-//@ts-ignore
-import { parse } from 'himalaya';
 import fetch from 'node-fetch';
 import { Person, CNumber, Tense, Mood, Form } from './constants';
-import { hasAttribute, attributeValue, isTagType, flattenText } from './util';
+import { extractComponentData } from './util';
 
 interface ConjugationResult {
     person?: Person;
@@ -10,23 +8,15 @@ interface ConjugationResult {
     tense: Tense;
     mood: Mood;
     form: Form;
-    sdTense: string; // This holds the 'data-tense' from the SpanishDict
+    paradigm: string; // This holds the 'paradigm' from the SpanishDict
     word: string;
 }
 
 /**
- * From SpanishDict, the accidents to the verb are a bit mixed up. For example,
- * 'person' and 'number' are now in the same classification as 'person':
- *   First Singular = 0, // Yo
- *   Second Singular = 1, // Tú
- *   Thrid Singular = 2, // Él/Ella/Usted
- *   First Plural = 3, // Nosotros
- *   Second Plural = 4, // Vosotros
- *   Third Plural = 5, // Ellos/Ellas/Ustedes
- *   Any (?) = 6
- * 
  * The same has happened to the tenses. Tense is used in their data structure for both
  * simple tenses and compound tenses. It also has the infomration of mood.
+ * From SpanishDict, the tenses of the verb are a bit mixed up. For example,
+ * 
  *   presentIndicative = Present, Indicative
  *   preteritIndicative = Preterite, Indicative
  *   imperfectIndicative = Imperfect, Indicative
@@ -52,32 +42,31 @@ interface ConjugationResult {
  *   futurePerfectSubjunctive = Future, Perfect Subjunctive (compound tense)
  */
 
-function sdPersonToPerson(person: string): Person|undefined {
-    if (person === '0' || person === '3') {
+function convertPronounToPerson(person: string): Person|undefined {
+    if (person === 'yo' || person === 'nosotros') {
         return Person.First;
     }
-    if (person === '1' || person === '4') {
+    if (person === 'tú' || person === 'vosotros') {
         return Person.Second;
     }
-    if (person === '2' || person === '5') {
+    const thirdPersons = [ 'él', 'ella', 'Ud.', 'ellos', 'ellas', 'Uds.' ];
+    if (thirdPersons.some(p => person.includes(p))) {
         return Person.Third;
     }
 }
 
-function sdPersonToNumber(person: string): CNumber|undefined {
-    const num = Number.parseInt(person, 10);
-    if (Number.isNaN(num)) {
-        return;
-    }
-    if (0 <= num && num <= 2) {
+function convertPronounToNumber(person: string): CNumber|undefined {
+    const singulars = [ 'yo', 'tú', 'él', 'ella', 'Ud.' ];
+    const plurals = [ 'nosotros', 'vosotros', 'ellos', 'ellas', 'Uds.' ];
+    if (singulars.some(singular => person.includes(singular))) {
         return CNumber.Singular;
     }
-    if (3 <= num && num <= 5) {
+    if (plurals.some(plural => person.includes(plural))) {
         return CNumber.Plural;
     }
 }
 
-function sdTenseToTense(tense: string): Tense {
+function convertParadigmToTense(tense: string): Tense {
     const match = /[A-Z][^\d]*/.exec(tense);
     if (match) {
         tense = tense.substring(0, match.index) + tense.substring(match.index + match[0].length);
@@ -105,7 +94,7 @@ function sdTenseToTense(tense: string): Tense {
     throw new Error(`Unknown tense ${tense}`);
 }
 
-function sdTenseToMood(tense: string): Mood {
+function convertParadigmToMood(tense: string): Mood {
     const lcTense = tense.toLowerCase();
     if (lcTense.includes('indicative')) {
         return Mood.Indicative;
@@ -119,7 +108,7 @@ function sdTenseToMood(tense: string): Mood {
     return Mood.Indicative;
 }
 
-function sdTenseToForm(tense: string): Form {
+function convertParadigmToForm(tense: string): Form {
     if (tense.includes('Continuous')) {
         return Form.Progressive;
     }
@@ -129,67 +118,32 @@ function sdTenseToForm(tense: string): Form {
     return Form.Simple;
 }
 
-/**
- * Trims the unnecessary branches and returns the part that contains the conjugation
- * as an object array.
- * @param {String} html
- * @return {Array<Object>}
- */
-function extractConjugationJson(html: string): Array<any> {
-    const json = parse(html);
-    const link = attributeValue(json[1].children[0].children[1], 'href');
-    if (link.indexOf('https://www.spanishdict.com/conjugate/') !== 0) {
-        throw new Error('No conjugation found. Maybe it was not a verb?');
-    }
-    const contentDiv = json[1].children[1].children[0].children
-    .find((tag: any) => isTagType(tag, 'element', 'div') && hasAttribute(tag, 'class', 'content-container container'));
-    if (!contentDiv) {
-        throw new Error('Couldn\'t find the content div. SpanishDict API might have changed.');
-    }
-    const mainContainer = contentDiv.children.find((tag: any) => hasAttribute(tag, 'id', 'main-container-flex'));
-    if (!mainContainer) {
-        throw new Error('Couldn\'t find the main container. SpanishDict API might have changed.');
-    }
-    const conjugation = mainContainer.children[0].children
-    .find((tag: any) => isTagType(tag, 'element', 'div') && hasAttribute(tag, 'class', 'conjugation'));
-    if (!conjugation) {
-        throw new Error('Couldn\'t find the conjugation div. SpanishDict API might have changed');
-    }
-    return conjugation;
-}
-
-function convertTagToConjugationResult(tag: any): ConjugationResult {
-    const sdPerson = attributeValue(tag, 'data-person');
-    const sdTense = attributeValue(tag, 'data-tense');
-    const word = flattenText(tag.children);
-    return {
-        person: sdPersonToPerson(sdPerson),
-        number: sdPersonToNumber(sdPerson),
-        tense: sdTenseToTense(sdTense),
-        mood: sdTenseToMood(sdTense),
-        form: sdTenseToForm(sdTense),
-        sdTense: sdTense,
-        word: word
-    };
-}
-
-/**
- * Recursively converts the JSON to ConjugationResult array
- */
-function convertTagToConjugationResults(tag: any): Array<ConjugationResult> {
-    let results: Array<ConjugationResult> = [];
-    if (isTagType(tag, 'element') && hasAttribute(tag, 'data-person')) {
-        results.push(convertTagToConjugationResult(tag));
-    } else if (tag.children) {
-        tag.children.forEach((childTag: any) => {
-            results = results.concat(convertTagToConjugationResults(childTag));
-        });
-    }
-    return results;
+function convertParadigmToConjugationResults(paradigm: string, data: []): Array<ConjugationResult> {
+    return data.map((item: any) => ({
+        person: convertPronounToPerson(item.pronoun),
+        number: convertPronounToNumber(item.pronoun),
+        tense: convertParadigmToTense(paradigm),
+        mood: convertParadigmToMood(paradigm),
+        form: convertParadigmToForm(paradigm),
+        paradigm: paradigm,
+        word: item.word
+    }));
 }
 
 function extract(html: string): Array<ConjugationResult> {
-    return convertTagToConjugationResults(extractConjugationJson(html));
+    const componentData = extractComponentData(html);
+    if (!componentData.altLangUrl.includes('/verbos/')) {
+        throw new Error('No conjugation found. Maybe it was not a verb?');
+    }
+    const paradigms = componentData.verb?.paradigms;
+    if (!paradigms) {
+        throw new Error('Couldn\'t find paradigms in the component data. SpanishDict API might have changed');
+    }
+    let results: Array<ConjugationResult> = [];
+    for (const paradigm in paradigms) {
+        results = results.concat(convertParadigmToConjugationResults(paradigm, paradigms[paradigm]));
+    }
+    return results;
 }
 
 async function query(verb: string): Promise<Array<ConjugationResult>> {
@@ -201,7 +155,6 @@ async function query(verb: string): Promise<Array<ConjugationResult>> {
 }
 
 export {
-    convertTagToConjugationResults,
     extract,
     query
 };
