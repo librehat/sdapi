@@ -1,6 +1,7 @@
-import { extract, query } from '../conjugation';
+import extract from '../conjugation';
 import { Person, CNumber, Tense, Mood, Form } from '../constants';
 import fs from 'fs';
+import request from '../request';
 
 test('Spanish verb - hacer', () => {
     const html = fs.readFileSync('./src/test/conjug_hacer.html', 'utf-8');
@@ -54,7 +55,7 @@ test('Spanish verb - hacer', () => {
 
 test('Real-world verb conjugation - hacer', async () => {
     // Similar test but this one queries the word from SpanishDict.com
-    const result = await query('hacer');
+    const result = extract(await request.conjugate('hacer'));
     expect(result).toContainEqual({
         person: Person.First,
         number: CNumber.Singular,

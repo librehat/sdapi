@@ -1,5 +1,6 @@
-import { extract, query } from '../dictionary';
+import extract from '../dictionary';
 import { Gender, Language } from '../constants';
+import request from '../request';
 import fs from 'fs';
 
 test('Spanish word - libro', () => {
@@ -59,7 +60,7 @@ test('Bilingual word - once', () => {
 
 test('Real-world query - libro', async () => {
     // Similar test but this one queries the word from SpanishDict.com
-    const result = await query('libro');
+    const result = extract(await request.translate('libro'));
     result.forEach(word => {
         expect(word.word).toMatch('libro');
     });

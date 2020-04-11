@@ -1,8 +1,7 @@
-import fetch from 'node-fetch';
 import { Person, CNumber, Tense, Mood, Form } from './constants';
 import { extractComponentData } from './util';
 
-interface ConjugationResult {
+export interface ConjugationResult {
     person?: Person;
     number?: CNumber;
     tense: Tense;
@@ -146,16 +145,4 @@ function extract(html: string): Array<ConjugationResult> {
     return results;
 }
 
-async function query(verb: string): Promise<Array<ConjugationResult>> {
-    if (!verb.length) {
-        return Promise.reject(new Error('Zero-length word'));
-    }
-    const res = await fetch(`https://www.spanishdict.com/conjugate/${verb}`);
-    return extract(await res.text());
-}
-
-export {
-    extract,
-    query
-};
-export default query;
+export default extract;

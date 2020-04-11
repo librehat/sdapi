@@ -1,13 +1,12 @@
-import fetch from 'node-fetch';
 import { Gender, Language } from './constants';
 import { extractComponentData } from './util';
 
-interface Example {
+export interface Example {
     original: string;
     translated: string;
 }
 
-interface WordResult {
+export interface WordResult {
     lang: Language;
     word: string;
     gender?: Gender;
@@ -64,16 +63,4 @@ function extract(html: string): Array<WordResult> {
     .map((sense: any) => convertSense(sense, resultsProps.entryLang));
 }
 
-async function query(word: string): Promise<Array<WordResult>> {
-    if (!word.length) {
-        return Promise.reject(new Error('Zero-length word'));
-    }
-    const res = await fetch(`https://www.spanishdict.com/translate/${word}`);
-    return extract(await res.text());
-}
-
-export {
-    extract,
-    query
-};
-export default query;
+export default extract;
