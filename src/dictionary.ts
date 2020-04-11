@@ -58,8 +58,8 @@ function extract(html: string): Array<WordResult> {
         throw new Error('Cannot find neodict. SpanishDict API might have changed');
     }
     return neodict
-    .map((nd: any) => nd.posGroups).flat()
-    .map((posGroup: any) => posGroup.senses).flat()
+    .map((nd: any) => nd.posGroups).reduce((acc: [], val: any) => acc.concat(val), [])
+    .map((posGroup: any) => posGroup.senses).reduce((acc: [], val: any) => acc.concat(val), [])
     .map((sense: any) => convertSense(sense, resultsProps.entryLang));
 }
 
