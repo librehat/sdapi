@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc",
     "rollup": "rollup -c rollup.config.js",
+    "rollup:qml": "rollup -c rollup.qml.config.js",
     "lint": "eslint src/*.{ts,js} src/test/*.{ts,js}",
     "test": "jest --collect-coverage"
   },
