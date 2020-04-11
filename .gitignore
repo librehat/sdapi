@@ -62,6 +62,7 @@ typings/
 
 # Output files
 lib/
+dist/
 
 # Temporary files
 *.swp

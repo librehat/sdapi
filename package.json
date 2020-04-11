@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "rollup": "rollup -c rollup.config.js",
     "lint": "eslint src/*.{ts,js} src/test/*.{ts,js}",
     "test": "jest --collect-coverage"
   },
@@ -34,6 +35,11 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@types/node": "latest",
-    "@types/node-fetch": "latest"
+    "@types/node-fetch": "latest",
+    "rollup": "^2.6.0",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "@rollup/plugin-typescript": "^4.0.0",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "stream-browserify": "^2.0.2"
   }
 }
