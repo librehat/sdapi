@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const query = require('../lib/dictionary').query;
+const query = require('../lib/index').default.translate;
 
 const word = process.argv.slice(2).join(' ');
 query(word)
