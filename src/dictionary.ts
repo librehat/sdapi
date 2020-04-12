@@ -37,30 +37,29 @@ function convertExample(example: any, lang: Language): Example {
     };
 }
 
-function convertSense(sense: any, lang: Language): WordResult {
-    const translation = sense.translations[0];
-    return {
+function convertSense(sense: any, lang: Language): Array<WordResult> {
+    return sense.translations.map((translation: any) => ({
         word: sense.subheadword,
         lang: lang,
         gender: sense.gender ? convertGender(sense.gender) : undefined,
-        context: sense.context,
+        context: sense.context + (translation.contextEn?.length ? `, ${translation.contextEn}` : ''),
         meaning: translation.translation,
         part: sense.partOfSpeech.nameEn,
         examples: translation.examples.map((eg: any) => convertExample(eg, lang)),
-        regions: sense.regions.map((region: any) => region.nameEn)
-    };
+        regions: sense.regions.concat(translation.regions).map((region: any) => region.nameEn)
+    }));
 }
 
 function extract(html: string): Array<WordResult> {
     const resultsProps = extractComponentData(html).sdDictionaryResultsProps;
     const neodict = resultsProps?.entry?.neodict;
-    if (!neodict || !neodict.length) {
+    if (!neodict?.length) {
         throw new Error('Cannot find neodict. SpanishDict API might have changed');
     }
     return neodict
     .map((nd: any) => nd.posGroups).reduce((acc: [], val: any) => acc.concat(val), [])
     .map((posGroup: any) => posGroup.senses).reduce((acc: [], val: any) => acc.concat(val), [])
-    .map((sense: any) => convertSense(sense, resultsProps.entryLang));
+    .reduce((acc: Array<WordResult>, val: Array<WordResult>) => acc.concat(convertSense(val, resultsProps.entryLang)), []);
 }
 
 export default extract;

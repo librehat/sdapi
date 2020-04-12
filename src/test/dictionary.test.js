@@ -39,6 +39,22 @@ test('Bilingual word - once', () => {
         ],
         regions: []
     };
+    const es2 = {
+      // This is the second translation under the 'masculine noun (number)'
+      word: 'once',
+      lang: Language.Spanish,
+      gender: Gender.Masculine,
+      context: 'number, in dates',
+      meaning: 'eleventh',
+      part: 'noun',
+      examples: [
+        {
+          original: 'Su cumpleaños es el once de junio.',
+          translated: 'His birthday is the eleventh of June.'
+        }
+      ],
+      regions: []
+    };
     const en1 = {
         word: 'once',
         lang: Language.English,
@@ -55,6 +71,7 @@ test('Bilingual word - once', () => {
         regions: []
     };
     expect(result).toContainEqual(es1);
+    expect(result).toContainEqual(es2);
     expect(result).not.toContainEqual(en1);
 });
 
