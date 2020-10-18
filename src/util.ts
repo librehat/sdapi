@@ -45,28 +45,30 @@ export function flattenText(children: Array<any>): string {
     return text;
 }
 
-export function extractComponentData(html: string): any {
-    const body = parse(html)[1];
-    const dataSearchFn = (element: any) => {
-        return element.children.find(
-            (child: any) =>
-            isTagType(child, 'element', 'script')
-            && child.children?.length
-            && child.children[0].type === 'text'
-            && child.children[0].content.includes('SD_COMPONENT_DATA')
-        );
-    };
-    let resultTag;
-    for (const child of body.children) {
-        resultTag = dataSearchFn(child);
-        if (resultTag) {
-            break;
-        }
+export function extractComponentData(htmlString: string): any {
+    const html = parse(htmlString).find((element: any) => isTagType(element, 'element', 'html'));
+    const body = html.children.find((element: any) => isTagType(element, 'element', 'body'));
+    if (!body) {
+        throw new Error('Cannot find the body tag. SpanishDict API might have changed');
     }
+    const dataComponentFindFn = (element: any): any => {
+      for (const child of element.children ?? []) {
+        if (isTagType(child, 'element', 'script') && child.children?.length) {
+          const grandResult = dataComponentFindFn(child);
+          if (grandResult) {  // find it
+            return grandResult;
+          }
+        }
+        if (child.type === 'text' && child.content.includes('SD_COMPONENT_DATA')) {
+          return child;
+        }
+      }
+    };
+    const resultTag = dataComponentFindFn(body);
     if (!resultTag) {
         throw new Error('Cannot find the tag with results. SpanishDict API might have changed');
     }
-    const resultsLine = resultTag.children[0].content.split('\n').find((line: string) => line.includes('SD_COMPONENT_DATA'));
+    const resultsLine = resultTag.content.split('\n').find((line: string) => line.includes('SD_COMPONENT_DATA'));
     return JSON.parse(resultsLine.substring(resultsLine.indexOf('=') + 1,
                                             resultsLine.length - 1));
 }
