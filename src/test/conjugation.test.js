@@ -6,11 +6,7 @@ import request from '../request';
 test('Spanish verb - hacer', () => {
     const html = fs.readFileSync('./src/test/conjug_hacer.html', 'utf-8');
     const result = extract(html);
-    result.forEach(item => {
-        if(item.word === 'estaríamos haciendo') {
-            console.log(item);
-        }
-    });
+
     expect(result).toContainEqual({
         pronoun: 'yo',
         person: Person.First,

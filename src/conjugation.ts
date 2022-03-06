@@ -119,9 +119,6 @@ function convertParadigmToForm(tense: string): Form {
 }
 
 function convertParadigmToConjugationResults(paradigm: string, data: []): Array<ConjugationResult> {
-    // data.forEach((item: any) => {
-    //     console.log(item.pronoun);
-    // });
     return data.map((item: any) => ({
         pronoun: item.pronoun,
         person: convertPronounToPerson(item.pronoun),
