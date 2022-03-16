@@ -6,7 +6,9 @@ import request from '../request';
 test('Spanish verb - hacer', () => {
     const html = fs.readFileSync('./src/test/conjug_hacer.html', 'utf-8');
     const result = extract(html);
+
     expect(result).toContainEqual({
+        pronoun: 'yo',
         person: Person.First,
         number: CNumber.Singular,
         tense: Tense.Present,
@@ -15,7 +17,9 @@ test('Spanish verb - hacer', () => {
         paradigm: 'presentIndicative',
         word: 'hago'
     });
+
     expect(result).toContainEqual({
+        pronoun: 'tú',
         person: Person.Second,
         number: CNumber.Singular,
         tense: Tense.Imperfect2,
@@ -25,6 +29,7 @@ test('Spanish verb - hacer', () => {
         word: 'hicieses'
     });
     expect(result).toContainEqual({
+        pronoun: 'Uds.',
         person: Person.Third,
         number: CNumber.Plural,
         tense: Tense.Negative,
@@ -34,6 +39,7 @@ test('Spanish verb - hacer', () => {
         word: 'no hagan'
     });
     expect(result).toContainEqual({
+        pronoun: 'nosotros',
         person: Person.First,
         number: CNumber.Plural,
         tense: Tense.Conditional,
@@ -43,6 +49,7 @@ test('Spanish verb - hacer', () => {
         word: 'estaríamos haciendo'
     });
     expect(result).toContainEqual({
+        pronoun: 'tú',
         person: Person.Second,
         number: CNumber.Singular,
         tense: Tense.Past,
@@ -57,6 +64,7 @@ test('Real-world verb conjugation - hacer', async () => {
     // Similar test but this one queries the word from SpanishDict.com
     const result = extract(await request.conjugate('hacer'));
     expect(result).toContainEqual({
+        pronoun: 'yo',
         person: Person.First,
         number: CNumber.Singular,
         tense: Tense.Present,
@@ -76,6 +84,7 @@ test('Spanish verb (non-inifinivo) - como', () => {
     const html = fs.readFileSync('./src/test/conjug_como.html', 'utf-8');
     const result = extract(html);
     expect(result).toContainEqual({
+        pronoun: 'él/ella/Ud.',
         person: Person.Third,
         number: CNumber.Singular,
         tense: Tense.Present,

@@ -2,6 +2,7 @@ import { Person, CNumber, Tense, Mood, Form } from './constants';
 import { extractComponentData } from './util';
 
 export interface ConjugationResult {
+    pronoun?: string;
     person?: Person;
     number?: CNumber;
     tense: Tense;
@@ -119,6 +120,7 @@ function convertParadigmToForm(tense: string): Form {
 
 function convertParadigmToConjugationResults(paradigm: string, data: []): Array<ConjugationResult> {
     return data.map((item: any) => ({
+        pronoun: item.pronoun,
         person: convertPronounToPerson(item.pronoun),
         number: convertPronounToNumber(item.pronoun),
         tense: convertParadigmToTense(paradigm),
