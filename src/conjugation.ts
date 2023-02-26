@@ -82,6 +82,8 @@ function convertParadigmToTense(tense: string): Tense {
             return Tense.Imperfect2;
         case 'future':
             return Tense.Future;
+        case 'informal':
+            return Tense.Informal;
         case 'imperative':
             return Tense.Affirmative;
         case 'negative':
