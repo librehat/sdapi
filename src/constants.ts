@@ -27,6 +27,7 @@ enum Tense {
     Conditional = 'conditional',
     Imperfect2 = 'imperfect2',
     Future = 'future',
+    Informal = 'informal',
     Affirmative = 'affirmative',
     Negative = 'negative',
     Past = 'past'
