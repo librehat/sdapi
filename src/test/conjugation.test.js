@@ -15,7 +15,8 @@ test('Spanish verb - hacer', () => {
         mood: Mood.Indicative,
         form: Form.Simple,
         paradigm: 'presentIndicative',
-        word: 'hago'
+        word: 'hago',
+        isIrregular: true,
     });
 
     expect(result).toContainEqual({
@@ -26,7 +27,8 @@ test('Spanish verb - hacer', () => {
         mood: Mood.Subjunctive,
         form: Form.Simple,
         paradigm: 'imperfectSubjunctive2',
-        word: 'hicieses'
+        word: 'hicieses',
+        isIrregular: true,
     });
     expect(result).toContainEqual({
         pronoun: 'Uds.',
@@ -36,7 +38,8 @@ test('Spanish verb - hacer', () => {
         mood: Mood.Imperative,
         form: Form.Simple,
         paradigm: 'negativeImperative',
-        word: 'no hagan'
+        word: 'no hagan',
+        isIrregular: true,
     });
     expect(result).toContainEqual({
         pronoun: 'nosotros',
@@ -46,7 +49,8 @@ test('Spanish verb - hacer', () => {
         mood: Mood.Indicative,
         form: Form.Progressive,
         paradigm: 'conditionalContinuous',
-        word: 'estaríamos haciendo'
+        word: 'estaríamos haciendo',
+        isIrregular: false,
     });
     expect(result).toContainEqual({
         pronoun: 'tú',
@@ -56,7 +60,8 @@ test('Spanish verb - hacer', () => {
         mood: Mood.Subjunctive,
         form: Form.Perfect,
         paradigm: 'pastPerfectSubjunctive',
-        word: 'hubieras hecho'
+        word: 'hubieras hecho',
+        isIrregular: true,
     });
 });
 
@@ -71,7 +76,8 @@ test('Real-world verb conjugation - hacer', async () => {
         mood: Mood.Indicative,
         form: Form.Simple,
         paradigm: 'presentIndicative',
-        word: 'hago'
+        word: 'hago',
+        isIrregular: true,
     });
 });
 
@@ -91,6 +97,7 @@ test('Spanish verb (non-inifinivo) - como', () => {
         mood: Mood.Subjunctive,
         form: Form.Perfect,
         paradigm: 'presentPerfectSubjunctive',
-        word: 'haya comido'
+        word: 'haya comido',
+        isIrregular: false,
     });
 });
