@@ -10,6 +10,7 @@ export interface ConjugationResult {
     form: Form;
     paradigm: string; // This holds the 'paradigm' from the SpanishDict
     word: string;
+    isIrregular: boolean;
 }
 
 /**
@@ -129,7 +130,8 @@ function convertParadigmToConjugationResults(paradigm: string, data: []): Array<
         mood: convertParadigmToMood(paradigm),
         form: convertParadigmToForm(paradigm),
         paradigm: paradigm,
-        word: item.word
+        word: item.word,
+        isIrregular: item.isIrregular ?? false,
     }));
 }
 
